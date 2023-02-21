@@ -20,7 +20,7 @@ import java.awt.event.*;
 /***
  * Step 1 for keyboard control - implements KeyListener
  */
-public class CheeseWorld implements Runnable, KeyListener {
+public class Ballistics implements Runnable, KeyListener, MouseListener {
 
     //Variable Definition Section
 
@@ -35,25 +35,27 @@ public class CheeseWorld implements Runnable, KeyListener {
     public BufferStrategy bufferStrategy;
 
     //Declare the variables needed for images
-    public Image cheesePic;
-    public Image mousePic;
-    public Image tomPic;
+    public Image BallsPic;
+    public Image BlockPic;
+
 
     //Declare the character objects
-    public Mouse mouse1;
-    public Cheese theCheese;
-    public Player user;
+
+    public Balls balls[];
+    public Block blocks[];
+
+    public int Counter;
 
     // Main method definition
     // This is the code that runs first and automatically
     public static void main(String[] args) {
-        CheeseWorld myApp = new CheeseWorld();   //creates a new instance of the game
+        Ballistics myApp = new Ballistics();   //creates a new instance of the game
         new Thread(myApp).start();               //creates a threads & starts up the code in the run( ) method
     }
 
     // Constructor Method - setup portion of the program
     // Initialize your variables and construct your program objects here.
-    public CheeseWorld() {
+    public Ballistics() {
 
         setUpGraphics();
 
@@ -63,14 +65,24 @@ public class CheeseWorld implements Runnable, KeyListener {
         canvas.addKeyListener(this);
 
         //load images
-        cheesePic = Toolkit.getDefaultToolkit().getImage("cheese.gif");
-        mousePic = Toolkit.getDefaultToolkit().getImage("jerry.gif");
-        tomPic = Toolkit.getDefaultToolkit().getImage("tomCat.png");
+        BallsPic = Toolkit.getDefaultToolkit().getImage("BouncyBall.png");
+        BlockPic = Toolkit.getDefaultToolkit().getImage("Block.png");
+
 
         //create (construct) the objects needed for the game
-        mouse1 = new Mouse(200, 300, 4, 4, mousePic);
-        theCheese = new Cheese(400, 300, 3, -4, cheesePic);
-        user = new Player(250, 250, 0, 0, tomPic);
+
+        blocks = new Block[20];
+        for (int i = 0; i < 20; i++) {
+            blocks[i] = new Block(0 + 100 * i, 0, 0, 0, BlockPic, 100);
+        }
+
+        balls = new Balls[50];
+
+        for (int i = 0; i < 50; i++) {
+            balls[i] = new Balls(400, 400 + (i * 4), 0, -1, BallsPic);
+            balls[i].delay = 0 + 10 * i;
+        }
+
 
     } // CheeseWorld()
 
@@ -81,10 +93,29 @@ public class CheeseWorld implements Runnable, KeyListener {
     // main thread
     // this is the code that plays the game after you set things up
     public void moveThings() {
-        mouse1.move();
-        theCheese.move();
-        user.move();
+        for (int i = 0; i < 50; i++) {
+            balls[i].move();
+        }
+
+
     }
+
+    public void collisions() {
+
+
+        for (int r = 0; r < 20; r++) {
+            for (int i = 0; i < 50; i++) {
+                if (balls[i].rec.intersects(blocks[r].rec)) {
+                    System.out.println("rahs");
+                    balls[i].dy = Math.abs(balls[i].dy);
+                }
+            }
+        }
+
+    }
+
+
+
 
     public void checkIntersections() {
 
@@ -96,6 +127,7 @@ public class CheeseWorld implements Runnable, KeyListener {
             checkIntersections();   // check character crashes
             render();               // paint the graphics
             pause(20);         // sleep for 20 ms
+            collisions();
         }
     }
 
@@ -105,9 +137,29 @@ public class CheeseWorld implements Runnable, KeyListener {
         g.clearRect(0, 0, WIDTH, HEIGHT);
 
         //draw characters to the screen
-        g.drawImage(mouse1.pic, mouse1.xpos, mouse1.ypos, mouse1.width, mouse1.height, null);
-        g.drawImage(theCheese.pic, theCheese.xpos, theCheese.ypos, theCheese.width, theCheese.height, null);
-        g.drawImage(user.pic, user.xpos, user.ypos, user.width, user.height, null);
+
+
+       for (int i = 0; i < 50; i++) {
+
+           if (balls[i].delay == 0) {
+               g.drawImage(balls[i].pic, balls[i].xpos, balls[i].ypos, balls[i].width, balls[i].height, null);
+           }
+           else{
+               balls[i].delay--;
+           }
+       }
+        g.setColor(Color.CYAN); //sets the color of the pen
+        g.setFont(new Font("TimesRoman", Font.BOLD, 15)); //sets the font of the text
+       for(int i = 0; i < 20; i++){
+           g.drawImage(blocks[i].pic, blocks[i].xpos, blocks[i].ypos, blocks[i].width, blocks[i].height, null);
+           g.drawString(String.valueOf(blocks[i].counter), blocks[i].xpos+(blocks[i].width/4), blocks[i].ypos+ (2*blocks[i].height/3));
+
+       }
+
+
+        // takes the counter, converts it to a string and prints it at Block1 location
+
+
 
         g.dispose();
         bufferStrategy.show();
@@ -124,39 +176,27 @@ public class CheeseWorld implements Runnable, KeyListener {
         int keyCode = event.getKeyCode();  //gets the keyCode (an integer) of the key pressed
         System.out.println("Key Pressed: " + key + "  Code: " + keyCode);
 
-        if (keyCode == 68) { // d
-            user.right = true;
-        }
-        if (keyCode == 65) { // a
-            user.left = true;
-        }
-
-        if (keyCode == 83) { // s
-            user.down = true;
-        }
-        if (keyCode == 87) { // w
-            user.up = true;
-        }
     }//keyPressed()
 
     public void keyReleased(KeyEvent event) {
         char key = event.getKeyChar();
         int keyCode = event.getKeyCode();
-        //This method will do something when a key is released
-        if (keyCode == 68) { // d
-            user.right = false;
-        }
-        if (keyCode == 65) { // a
-            user.left = false;
-        }
-        if (keyCode == 83) { // s
-            user.down = false;
-        }
-        if (keyCode == 87) { // w
-            user.up = false;
+//        This method will do something when a key is released
+//        if (keyCode == 68) { // d
+//            user.right = false;
+//        }
+//        if (keyCode == 65) { // a
+//            user.left = false;
+//        }
+//        if (keyCode == 83) { // s
+//            user.down = false;
+//        }
+//        if (keyCode == 87) { // w
+//            user.up = false;
         }
 
-    }//keyReleased()
+
+    //keyReleased()
 
     public void keyTyped(KeyEvent event) {
         // handles a press of a character key (any key that can be printed but not keys like SHIFT)
@@ -177,6 +217,7 @@ public class CheeseWorld implements Runnable, KeyListener {
         canvas = new Canvas();
         canvas.setBounds(0, 0, WIDTH, HEIGHT);
         canvas.setIgnoreRepaint(true);
+        canvas.addMouseListener(this);
 
         panel.add(canvas);  // adds the canvas to the panel.
 
@@ -204,4 +245,40 @@ public class CheeseWorld implements Runnable, KeyListener {
         }
     }
 
+    @Override
+    public void mouseClicked(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+//        System.out.println(e.getX());
+//        if(Ball1.xpos>e.getX()){
+//            Ball1.dx=-3;
+//        }
+//        if(Ball1.xpos<e.getX()){
+//            Ball1.dx=3;
+//        }
+
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+
+    }
+
 }//class
+
+// Make variable for how many shots
+// Starting number of block is ^+1
+
