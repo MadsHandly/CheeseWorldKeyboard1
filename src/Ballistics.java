@@ -26,7 +26,7 @@ public class Ballistics implements Runnable, KeyListener, MouseListener {
 
     //Sets the width and height of the program window
     final int WIDTH = 1000;
-    final int HEIGHT = 650;
+    final int HEIGHT = 660;
 
     //Declare the variables needed for the graphics
     public JFrame frame;
@@ -44,6 +44,10 @@ public class Ballistics implements Runnable, KeyListener, MouseListener {
     public Balls balls[];
     public Block blocks[];
 
+    public int xStart = 400;
+    public int yStart=630;
+    public int xClick,yClick, a, b;
+    public double c;
     public int Counter;
 
     // Main method definition
@@ -66,22 +70,20 @@ public class Ballistics implements Runnable, KeyListener, MouseListener {
 
         //load images
         BallsPic = Toolkit.getDefaultToolkit().getImage("BouncyBall.png");
-        BlockPic = Toolkit.getDefaultToolkit().getImage("Block.png");
-
+        BlockPic = Toolkit.getDefaultToolkit().getImage("block.png");
 
         //create (construct) the objects needed for the game
 
-        blocks = new Block[20];
-        for (int i = 0; i < 20; i++) {
-            blocks[i] = new Block(0 + 100 * i, 0, 0, 0, BlockPic, 100);
+        blocks = new Block[9];
+        for (int i = 0; i < blocks.length; i++) {
+            blocks[i] = new Block(  (111* i)-8, 0, 0, 0, BlockPic, 100);
         }
-
         balls = new Balls[50];
-
-        for (int i = 0; i < 50; i++) {
-            balls[i] = new Balls(400, 400 + (i * 4), 0, -1, BallsPic);
-            balls[i].delay = 0 + 10 * i;
+        for (int i = 0; i < balls.length; i++) {
+            balls[i] = new Balls(xStart, yStart, 0, 0, BallsPic);
+           // balls[i].delay = 50+10*i;//0 + 5 * i;
         }
+        //650 + (i * 9)
 
 
     } // CheeseWorld()
@@ -93,8 +95,21 @@ public class Ballistics implements Runnable, KeyListener, MouseListener {
     // main thread
     // this is the code that plays the game after you set things up
     public void moveThings() {
-        for (int i = 0; i < 50; i++) {
+        for (int i = 0; i < balls.length; i++) {
             balls[i].move();
+//            if(balls[i].ypos>=650){
+//                balls[i].xpos=xStart;
+//            }
+            //stopping ball at  bottom of the screen
+            if (balls[i].dy > 0 && balls[i].ypos > (630)){
+                balls[i].dy = 0;
+                balls[i].dx = 0;
+                xStart=balls[i].xpos;
+                yStart=balls[i].ypos;
+                System.out.println("xStarting Point: " + xStart);
+                System.out.println("yStarting Point: " + yStart);
+            }
+
         }
 
 
@@ -102,16 +117,15 @@ public class Ballistics implements Runnable, KeyListener, MouseListener {
 
     public void collisions() {
 
-
-        for (int r = 0; r < 20; r++) {
-            for (int i = 0; i < 50; i++) {
+        for (int r = 0; r <blocks.length; r++) {
+            for (int i = 0; i < balls.length; i++) {
                 if (balls[i].rec.intersects(blocks[r].rec)) {
-                    System.out.println("rahs");
                     balls[i].dy = Math.abs(balls[i].dy);
+
+                    blocks[r].counter = blocks[r].counter - 1;
                 }
             }
         }
-
     }
 
 
@@ -139,20 +153,21 @@ public class Ballistics implements Runnable, KeyListener, MouseListener {
         //draw characters to the screen
 
 
-       for (int i = 0; i < 50; i++) {
+       for (int i = 0; i < balls.length; i++) {
 
            if (balls[i].delay == 0) {
                g.drawImage(balls[i].pic, balls[i].xpos, balls[i].ypos, balls[i].width, balls[i].height, null);
+               g.drawRect(balls[i].rec.x, balls[i].rec.y, balls[i].rec.width, balls[i].rec.height);
            }
-           else{
-               balls[i].delay--;
-           }
+//           else{
+//               balls[i].delay--;
+//           }
        }
         g.setColor(Color.CYAN); //sets the color of the pen
         g.setFont(new Font("TimesRoman", Font.BOLD, 15)); //sets the font of the text
-       for(int i = 0; i < 20; i++){
+       for(int i = 0; i < blocks.length; i++){
            g.drawImage(blocks[i].pic, blocks[i].xpos, blocks[i].ypos, blocks[i].width, blocks[i].height, null);
-           g.drawString(String.valueOf(blocks[i].counter), blocks[i].xpos+(blocks[i].width/4), blocks[i].ypos+ (2*blocks[i].height/3));
+           g.drawString(String.valueOf(blocks[i].counter), blocks[i].xpos+(blocks[i].width/2), blocks[i].ypos+ (2*blocks[i].height/4));
 
        }
 
@@ -248,22 +263,42 @@ public class Ballistics implements Runnable, KeyListener, MouseListener {
     @Override
     public void mouseClicked(MouseEvent e) {
 
+
     }
 
     @Override
     public void mousePressed(MouseEvent e) {
-//        System.out.println(e.getX());
-//        if(Ball1.xpos>e.getX()){
-//            Ball1.dx=-3;
-//        }
-//        if(Ball1.xpos<e.getX()){
-//            Ball1.dx=3;
-//        }
-
+//       System.out.println("X: "+e.getX());
+//        System.out.println("Y: "+e.getY());
+//        xClick=e.getX();
+//        yClick=e.getY();
+//
+//        a =  (yStart-yClick);
+//        b =(xStart-xClick);
+//        c = Math.sqrt((a*a) + (b*b));
+//        System.out.println("c"+ c);
+//        System.out.println("b"+ b );
+//        System.out.println("a"+ a );
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
+        System.out.println("X: "+e.getX());
+        System.out.println("Y: "+e.getY());
+        xClick=e.getX();
+        yClick=e.getY();
+
+        a = (yStart-yClick);
+        b = (xStart-xClick);
+        c = Math.sqrt((a*a) + (b*b));
+        System.out.println("c"+ c);
+        System.out.println("b"+ b );
+        System.out.println("a"+ a );
+
+        for (int i = 0; i < balls.length; i++) {
+            balls[i].dy = -(a * (3/c));
+            balls[i].dx = -(b * (3/c));
+        }//-(a*(3/c))
 
     }
 

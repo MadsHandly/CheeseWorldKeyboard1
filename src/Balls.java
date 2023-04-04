@@ -12,11 +12,12 @@ public class Balls {
     public int ypos;                //the y position
     public int width;
     public int height;
-    public int dx;                    //the speed of the hero in the x direction
-    public int dy;                    //the speed of the hero in the y direction
+    public double dx;                    //the speed of the hero in the x direction
+    public double dy;                    //the speed of the hero in the y direction
     public Image pic;
     public Rectangle rec;
-public int delay;
+    public int delay;
+    public boolean isOnScreen;
 
 
 
@@ -38,7 +39,7 @@ public int delay;
     } // constructor
 
 
-    public Balls(int pXpos, int pYpos, int dxSpeed, int dySpeed, Image picParameter) {
+    public Balls(int pXpos, int pYpos, double dxSpeed, double dySpeed, Image picParameter) {
 
         xpos = pXpos;
         ypos = pYpos;
@@ -46,6 +47,7 @@ public int delay;
         height = 20;
         dx = dxSpeed;
         dy = dySpeed;
+        isOnScreen=false;
         pic = picParameter;
         rec = new Rectangle(xpos, ypos, width, height);
 
@@ -57,27 +59,22 @@ public int delay;
 
 
     public void move() {
-//        xpos = xpos + dx;
-//        ypos = ypos + dy;
-//
-//        {
-            xpos = xpos + dx;
-            ypos = ypos + dy;
 
-            if (xpos > 1000 - width || xpos < 0) {
-                dx = -dx;
-            }
 
-            if (ypos < 0 || ypos + height > 650) {
-                dy = -dy;
-            }
+        xpos = (int) (xpos + dx);
+        ypos = (int) (ypos + dy);
 
-            rec = new Rectangle(xpos, ypos, width, height);
+        if (xpos > 1000 - width || xpos < 0) {
+            dx = -dx;
+        }
 
-//        }
+        if (ypos < 0) {
+            dy = -dy;
+        }
+
 
         //always put this after you've done all the changing of the xpos and ypos values
-        rec = new Rectangle(xpos, ypos, width, height);
+        rec = new Rectangle(xpos, ypos, width - 15, height );
 
     }
 
