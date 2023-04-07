@@ -8,8 +8,8 @@ public class Balls {
     //VARIABLE DECLARATION SECTION
     //Here's where you state which variables you are going to use.
 
-    public int xpos;                //the x position
-    public int ypos;                //the y position
+    public double xpos;                //the x position
+    public double ypos;                //the y position
     public int width;
     public int height;
     public double dx;                    //the speed of the hero in the x direction
@@ -33,13 +33,13 @@ public class Balls {
         height = 50;
         dx = 5;
         dy = -5;
-        rec = new Rectangle(xpos, ypos, width, height);
+        rec = new Rectangle((int)xpos, (int)ypos, width, height);
 
 
     } // constructor
 
 
-    public Balls(int pXpos, int pYpos, double dxSpeed, double dySpeed, Image picParameter) {
+    public Balls(double pXpos, double pYpos, double dxSpeed, double dySpeed, Image picParameter) {
 
         xpos = pXpos;
         ypos = pYpos;
@@ -47,9 +47,9 @@ public class Balls {
         height = 20;
         dx = dxSpeed;
         dy = dySpeed;
-        isOnScreen=false;
+        isOnScreen = false;
         pic = picParameter;
-        rec = new Rectangle(xpos, ypos, width, height);
+        rec = new Rectangle((int)xpos, (int)ypos, width, height);
 
 
     } // constructor
@@ -61,8 +61,8 @@ public class Balls {
     public void move() {
 
 
-        xpos = (int) (xpos + dx);
-        ypos = (int) (ypos + dy);
+        xpos =  xpos + dx;
+        ypos =  ypos + dy;
 
         if (xpos > 1000 - width || xpos < 0) {
             dx = -dx;
@@ -74,7 +74,7 @@ public class Balls {
 
 
         //always put this after you've done all the changing of the xpos and ypos values
-        rec = new Rectangle(xpos, ypos, width - 15, height );
+        rec = new Rectangle((int)xpos, (int)ypos, width - 15, height );
 
     }
 

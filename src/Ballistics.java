@@ -44,9 +44,10 @@ public class Ballistics implements Runnable, KeyListener, MouseListener {
     public Balls balls[];
     public Block blocks[];
 
-    public int xStart = 400;
-    public int yStart=630;
-    public int xClick,yClick, a, b;
+    public double xStart = 400;
+
+    public double yStart = 630;
+    public double xClick,yClick, a, b;
     public double c;
     public int Counter;
 
@@ -80,8 +81,9 @@ public class Ballistics implements Runnable, KeyListener, MouseListener {
         }
         balls = new Balls[50];
         for (int i = 0; i < balls.length; i++) {
+           // yStart = yStart+(i + 20);
             balls[i] = new Balls(xStart, yStart, 0, 0, BallsPic);
-           // balls[i].delay = 50+10*i;//0 + 5 * i;
+           //balls[i].delay = 50+10*i;//0 + 5 * i;
         }
         //650 + (i * 9)
 
@@ -97,17 +99,21 @@ public class Ballistics implements Runnable, KeyListener, MouseListener {
     public void moveThings() {
         for (int i = 0; i < balls.length; i++) {
             balls[i].move();
-//            if(balls[i].ypos>=650){
-//                balls[i].xpos=xStart;
-//            }
+
             //stopping ball at  bottom of the screen
             if (balls[i].dy > 0 && balls[i].ypos > (630)){
                 balls[i].dy = 0;
                 balls[i].dx = 0;
-                xStart=balls[i].xpos;
-                yStart=balls[i].ypos;
+
+                xStart=balls[0].xpos;
+                yStart=balls[0].ypos;
+
+                balls[i].xpos = xStart;
+                balls[i].ypos = yStart;
+
                 System.out.println("xStarting Point: " + xStart);
                 System.out.println("yStarting Point: " + yStart);
+
             }
 
         }
@@ -156,8 +162,8 @@ public class Ballistics implements Runnable, KeyListener, MouseListener {
        for (int i = 0; i < balls.length; i++) {
 
            if (balls[i].delay == 0) {
-               g.drawImage(balls[i].pic, balls[i].xpos, balls[i].ypos, balls[i].width, balls[i].height, null);
-               g.drawRect(balls[i].rec.x, balls[i].rec.y, balls[i].rec.width, balls[i].rec.height);
+               g.drawImage(balls[i].pic, (int)balls[i].xpos, (int)balls[i].ypos, balls[i].width, balls[i].height, null);
+               //g.drawRect(balls[i].rec.x, balls[i].rec.y, balls[i].rec.width, balls[i].rec.height);
            }
 //           else{
 //               balls[i].delay--;
@@ -296,8 +302,8 @@ public class Ballistics implements Runnable, KeyListener, MouseListener {
         System.out.println("a"+ a );
 
         for (int i = 0; i < balls.length; i++) {
-            balls[i].dy = -(a * (3/c));
-            balls[i].dx = -(b * (3/c));
+            balls[i].dy = -(a * (5/c));
+            balls[i].dx = -(b * (5/c));
         }//-(a*(3/c))
 
     }
