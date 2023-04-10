@@ -44,7 +44,7 @@ public class Ballistics implements Runnable, KeyListener, MouseListener {
     public Balls balls[];
     public Block blocks[];
 
-    public double xStart = 400;
+    public double xStart = 500;
 
     public double yStart = 630;
     public double xClick,yClick, a, b;
@@ -75,15 +75,15 @@ public class Ballistics implements Runnable, KeyListener, MouseListener {
 
         //create (construct) the objects needed for the game
 
-        blocks = new Block[9];
+        blocks = new Block[90];
         for (int i = 0; i < blocks.length; i++) {
             blocks[i] = new Block(  (111* i)-8, 0, 0, 0, BlockPic, 100);
         }
         balls = new Balls[50];
         for (int i = 0; i < balls.length; i++) {
-           // yStart = yStart+(i + 20);
+            // yStart = yStart+(i + 20);
             balls[i] = new Balls(xStart, yStart, 0, 0, BallsPic);
-           //balls[i].delay = 50+10*i;//0 + 5 * i;
+            //balls[i].delay = 50+10*i;//0 + 5 * i;
         }
         //650 + (i * 9)
 
@@ -104,6 +104,9 @@ public class Ballistics implements Runnable, KeyListener, MouseListener {
             if (balls[i].dy > 0 && balls[i].ypos > (630)){
                 balls[i].dy = 0;
                 balls[i].dx = 0;
+
+//                for (int r = 0; r < blocks.length; r++)
+//                blocks[r].ypos = blocks[r].ypos - blocks[r].height;
 
                 xStart=balls[0].xpos;
                 yStart=balls[0].ypos;
@@ -129,6 +132,13 @@ public class Ballistics implements Runnable, KeyListener, MouseListener {
                     balls[i].dy = Math.abs(balls[i].dy);
 
                     blocks[r].counter = blocks[r].counter - 1;
+                }
+
+                if(blocks[r].counter == 0){
+                    blocks[r].xpos = 2000;
+                    blocks[r].ypos = 2000;
+                    blocks[r].rec.x=2000;
+                    blocks[r].rec.y=2000;
                 }
             }
         }
@@ -159,23 +169,25 @@ public class Ballistics implements Runnable, KeyListener, MouseListener {
         //draw characters to the screen
 
 
-       for (int i = 0; i < balls.length; i++) {
+        for (int i = 0; i < balls.length; i++) {
 
-           if (balls[i].delay == 0) {
-               g.drawImage(balls[i].pic, (int)balls[i].xpos, (int)balls[i].ypos, balls[i].width, balls[i].height, null);
-               //g.drawRect(balls[i].rec.x, balls[i].rec.y, balls[i].rec.width, balls[i].rec.height);
-           }
+            if (balls[i].delay == 0) {
+                g.drawImage(balls[i].pic, (int)balls[i].xpos, (int)balls[i].ypos, balls[i].width, balls[i].height, null);
+                //g.drawRect(balls[i].rec.x, balls[i].rec.y, balls[i].rec.width, balls[i].rec.height);
+            }
 //           else{
 //               balls[i].delay--;
 //           }
-       }
+        }
         g.setColor(Color.CYAN); //sets the color of the pen
         g.setFont(new Font("TimesRoman", Font.BOLD, 15)); //sets the font of the text
-       for(int i = 0; i < blocks.length; i++){
-           g.drawImage(blocks[i].pic, blocks[i].xpos, blocks[i].ypos, blocks[i].width, blocks[i].height, null);
-           g.drawString(String.valueOf(blocks[i].counter), blocks[i].xpos+(blocks[i].width/2), blocks[i].ypos+ (2*blocks[i].height/4));
 
-       }
+            for(int i = 0; i < blocks.length; i++){
+                //if(blocks[i].isAlive == true){
+                g.drawImage(blocks[i].pic, blocks[i].xpos, blocks[i].ypos, blocks[i].width, blocks[i].height, null);
+                g.drawString(String.valueOf(blocks[i].counter), blocks[i].xpos+(blocks[i].width/2), blocks[i].ypos+ (2*blocks[i].height/4));
+             //}
+        }
 
 
         // takes the counter, converts it to a string and prints it at Block1 location
@@ -214,7 +226,7 @@ public class Ballistics implements Runnable, KeyListener, MouseListener {
 //        }
 //        if (keyCode == 87) { // w
 //            user.up = false;
-        }
+    }
 
 
     //keyReleased()
@@ -322,4 +334,3 @@ public class Ballistics implements Runnable, KeyListener, MouseListener {
 
 // Make variable for how many shots
 // Starting number of block is ^+1
-

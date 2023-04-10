@@ -61,13 +61,13 @@ import java.awt.*;
 		public void move() {
 
 
-			if (xpos > 1000 - width || xpos < 0) {
+			/*if (xpos > 1000 - width || xpos < 0) {
 				dx = -dx;
 			}
 
 			if (ypos < 0 || ypos + height > 650) {
 				dy = -dy;
-			}
+			}*/
 
 			rec = new Rectangle(xpos, ypos, width, height);
 
